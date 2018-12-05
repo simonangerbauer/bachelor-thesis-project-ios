@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		130016E7D8D72FB5085DCDA3 /* Pods_Offline_Capability.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E0F9A92FFF6E69CB21D8E01E /* Pods_Offline_Capability.framework */; };
+		A830AA0121B7CE3D00E8AAC3 /* ReceivingSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = A830AA0021B7CE3D00E8AAC3 /* ReceivingSocket.swift */; };
 		A830F38F213F0AA900F66A77 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A830F38E213F0AA900F66A77 /* AppDelegate.swift */; };
 		A830F391213F0AA900F66A77 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A830F390213F0AA900F66A77 /* ViewController.swift */; };
 		A830F394213F0AA900F66A77 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A830F392213F0AA900F66A77 /* Main.storyboard */; };
@@ -15,8 +16,6 @@
 		A830F399213F0AAB00F66A77 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A830F397213F0AAB00F66A77 /* LaunchScreen.storyboard */; };
 		A830F3A4213F0AAB00F66A77 /* Offline_CapabilityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A830F3A3213F0AAB00F66A77 /* Offline_CapabilityTests.swift */; };
 		A830F3AF213F0AAB00F66A77 /* Offline_CapabilityUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A830F3AE213F0AAB00F66A77 /* Offline_CapabilityUITests.swift */; };
-		A8831E3E2195C1BB001E69B4 /* helloworld.grpc.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8831E3D2195C1BB001E69B4 /* helloworld.grpc.swift */; };
-		A8831E402195C407001E69B4 /* helloworld.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8831E3F2195C407001E69B4 /* helloworld.pb.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -39,6 +38,7 @@
 /* Begin PBXFileReference section */
 		09A5665990A2FF405F414F23 /* Pods-Offline Capability.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Offline Capability.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Offline Capability/Pods-Offline Capability.debug.xcconfig"; sourceTree = "<group>"; };
 		A46EB9978DB4C16800891AA5 /* Pods-Offline Capability.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Offline Capability.release.xcconfig"; path = "Pods/Target Support Files/Pods-Offline Capability/Pods-Offline Capability.release.xcconfig"; sourceTree = "<group>"; };
+		A830AA0021B7CE3D00E8AAC3 /* ReceivingSocket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceivingSocket.swift; sourceTree = "<group>"; };
 		A830F38B213F0AA900F66A77 /* Offline Capability.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Offline Capability.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A830F38E213F0AA900F66A77 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		A830F390213F0AA900F66A77 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -52,8 +52,6 @@
 		A830F3AA213F0AAB00F66A77 /* Offline CapabilityUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Offline CapabilityUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A830F3AE213F0AAB00F66A77 /* Offline_CapabilityUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Offline_CapabilityUITests.swift; sourceTree = "<group>"; };
 		A830F3B0213F0AAB00F66A77 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		A8831E3D2195C1BB001E69B4 /* helloworld.grpc.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = helloworld.grpc.swift; sourceTree = "<group>"; };
-		A8831E3F2195C407001E69B4 /* helloworld.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = helloworld.pb.swift; sourceTree = "<group>"; };
 		E0F9A92FFF6E69CB21D8E01E /* Pods_Offline_Capability.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Offline_Capability.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -86,7 +84,6 @@
 		A830F382213F0AA900F66A77 = {
 			isa = PBXGroup;
 			children = (
-				A8831E3C2195C1BB001E69B4 /* Generated */,
 				A830F38D213F0AA900F66A77 /* Offline Capability */,
 				A830F3A2213F0AAB00F66A77 /* Offline CapabilityTests */,
 				A830F3AD213F0AAB00F66A77 /* Offline CapabilityUITests */,
@@ -115,6 +112,7 @@
 				A830F395213F0AAB00F66A77 /* Assets.xcassets */,
 				A830F397213F0AAB00F66A77 /* LaunchScreen.storyboard */,
 				A830F39A213F0AAB00F66A77 /* Info.plist */,
+				A830AA0021B7CE3D00E8AAC3 /* ReceivingSocket.swift */,
 			);
 			path = "Offline Capability";
 			sourceTree = "<group>";
@@ -135,15 +133,6 @@
 				A830F3B0213F0AAB00F66A77 /* Info.plist */,
 			);
 			path = "Offline CapabilityUITests";
-			sourceTree = "<group>";
-		};
-		A8831E3C2195C1BB001E69B4 /* Generated */ = {
-			isa = PBXGroup;
-			children = (
-				A8831E3F2195C407001E69B4 /* helloworld.pb.swift */,
-				A8831E3D2195C1BB001E69B4 /* helloworld.grpc.swift */,
-			);
-			path = Generated;
 			sourceTree = "<group>";
 		};
 		C517C489067CF1AE8A6C4783 /* Frameworks */ = {
@@ -302,7 +291,7 @@
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-Offline Capability/Pods-Offline Capability-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/Action/Action.framework",
-				"${BUILT_PRODUCTS_DIR}/BoringSSL/openssl.framework",
+				"${BUILT_PRODUCTS_DIR}/CocoaAsyncSocket/CocoaAsyncSocket.framework",
 				"${BUILT_PRODUCTS_DIR}/Differentiator/Differentiator.framework",
 				"${BUILT_PRODUCTS_DIR}/NSObject+Rx/NSObject_Rx.framework",
 				"${BUILT_PRODUCTS_DIR}/Realm/Realm.framework",
@@ -311,17 +300,13 @@
 				"${BUILT_PRODUCTS_DIR}/RxDataSources/RxDataSources.framework",
 				"${BUILT_PRODUCTS_DIR}/RxRealm/RxRealm.framework",
 				"${BUILT_PRODUCTS_DIR}/RxSwift/RxSwift.framework",
-				"${BUILT_PRODUCTS_DIR}/SwiftGRPC/SwiftGRPC.framework",
-				"${BUILT_PRODUCTS_DIR}/SwiftProtobuf/SwiftProtobuf.framework",
-				"${BUILT_PRODUCTS_DIR}/gRPC-Core/grpc.framework",
-				"${BUILT_PRODUCTS_DIR}/nanopb/nanopb.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 			);
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Action.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/openssl.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/CocoaAsyncSocket.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Differentiator.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/NSObject_Rx.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Realm.framework",
@@ -330,10 +315,6 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxDataSources.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxRealm.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxSwift.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftGRPC.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftProtobuf.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/grpc.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/nanopb.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -369,10 +350,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A8831E3E2195C1BB001E69B4 /* helloworld.grpc.swift in Sources */,
 				A830F391213F0AA900F66A77 /* ViewController.swift in Sources */,
-				A8831E402195C407001E69B4 /* helloworld.pb.swift in Sources */,
 				A830F38F213F0AA900F66A77 /* AppDelegate.swift in Sources */,
+				A830AA0121B7CE3D00E8AAC3 /* ReceivingSocket.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

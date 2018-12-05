@@ -2,26 +2,8 @@ PODS:
   - Action (3.6.0):
     - RxCocoa (~> 4.2.0)
     - RxSwift (~> 4.2.0)
-  - BoringSSL (10.0.6):
-    - BoringSSL/Implementation (= 10.0.6)
-    - BoringSSL/Interface (= 10.0.6)
-  - BoringSSL/Implementation (10.0.6):
-    - BoringSSL/Interface (= 10.0.6)
-  - BoringSSL/Interface (10.0.6)
+  - CocoaAsyncSocket (7.6.3)
   - Differentiator (3.0.2)
-  - gRPC-Core (1.12.0):
-    - gRPC-Core/Implementation (= 1.12.0)
-    - gRPC-Core/Interface (= 1.12.0)
-  - gRPC-Core/Implementation (1.12.0):
-    - BoringSSL (~> 10.0)
-    - gRPC-Core/Interface (= 1.12.0)
-    - nanopb (~> 0.3)
-  - gRPC-Core/Interface (1.12.0)
-  - nanopb (0.3.8):
-    - nanopb/decode (= 0.3.8)
-    - nanopb/encode (= 0.3.8)
-  - nanopb/decode (0.3.8)
-  - nanopb/encode (0.3.8)
   - "NSObject+Rx (4.3.0)":
     - RxSwift (~> 4.0)
   - Realm (3.7.6):
@@ -39,30 +21,22 @@ PODS:
     - RealmSwift (~> 3.0)
     - RxSwift (~> 4.0)
   - RxSwift (4.2.0)
-  - SwiftGRPC (0.6.0):
-    - BoringSSL (~> 10.0)
-    - gRPC-Core (~> 1.12.0)
-    - SwiftProtobuf (~> 1.1.1)
-  - SwiftProtobuf (1.1.1)
 
 DEPENDENCIES:
   - Action
+  - CocoaAsyncSocket
   - "NSObject+Rx"
   - RealmSwift
   - RxCocoa
   - RxDataSources
   - RxRealm
   - RxSwift
-  - SwiftGRPC
-  - SwiftProtobuf
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
     - Action
-    - BoringSSL
+    - CocoaAsyncSocket
     - Differentiator
-    - gRPC-Core
-    - nanopb
     - "NSObject+Rx"
     - Realm
     - RealmSwift
@@ -70,15 +44,11 @@ SPEC REPOS:
     - RxDataSources
     - RxRealm
     - RxSwift
-    - SwiftGRPC
-    - SwiftProtobuf
 
 SPEC CHECKSUMS:
   Action: 3d9486d3da02b572b0a034b6c49ac4c3fbcc8b63
-  BoringSSL: e10f92a27043805c01071fe815a5cd98ae8212e7
+  CocoaAsyncSocket: eafaa68a7e0ec99ead0a7b35015e0bf25d2c8987
   Differentiator: a87be69eba49ec4ab460c7671143ee3a9eececfd
-  gRPC-Core: 9696b220565b283e021cf2722d473a4a74b7622a
-  nanopb: 5601e6bca2dbf1ed831b519092ec110f66982ca3
   "NSObject+Rx": 9a5eeff5e08156f849fa973514456f28eef08742
   Realm: 9eaecad54712d6246d08ba34c10f354e4715d7d3
   RealmSwift: 1fe08b4ebaeeaacf17f9ba0343f7b25c9fc31fa6
@@ -86,9 +56,7 @@ SPEC CHECKSUMS:
   RxDataSources: cb7c31e652a87ebb919da45f716bbb87b3765f6b
   RxRealm: a6c6c0a07cb61f34209969ca6657734edfdfff30
   RxSwift: 99e10317ddfcc7fbe01356aafd118fde4a0be104
-  SwiftGRPC: 465792c0e09dcb083d19d97137cee71b4f4f8b6f
-  SwiftProtobuf: 4298b0b814dd49031c3218fdfb8d42f7107c8a6d
 
-PODFILE CHECKSUM: af2eb5b1216565a7e467f6519e87a4f085e9864b
+PODFILE CHECKSUM: 928aa640d505b016ce7ef635964122c0b089342f
 
 COCOAPODS: 1.5.3

@@ -1,5 +1,5 @@
 use_frameworks!
-platform :ios, '11.4'
+platform :ios, '12.1'
 
 target 'Offline Capability' do
   # core RxSwift
@@ -15,7 +15,6 @@ target 'Offline Capability' do
   pod 'RealmSwift'
   pod 'RxRealm'
 
-  # gRPC
-  pod 'SwiftGRPC'
-  pod 'SwiftProtobuf'
+  # Sockets
+  pod 'CocoaAsyncSocket'
 end

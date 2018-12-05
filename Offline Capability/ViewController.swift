@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import SwiftGRPC
 
 class ViewController: UIViewController {
 
@@ -15,20 +14,7 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-            let client = Helloworld_GreeterServiceClient.init(address: "127.0.0.1:50051", secure: false)
-            do {
-                var request = Helloworld_HelloRequest()
-                request.name = "simon"
-                self.textField.text = try client.sayHello(request).message
-//                let test = try client.sayHello(request, completion: {[weak self] (reply, result) in
-//                    self?.displayMessageReceived(reply?.message)
-//                })
-            } catch {
-                print("unexpected error!")
-            }
-        }
-        // Do any additional setup after loading the view, typically from a nib.
+        let socket = ReceivingSocket()
     }
 
     func displayMessageReceived(_ message: String?) {
