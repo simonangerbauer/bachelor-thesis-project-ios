@@ -7,13 +7,18 @@
 //
 
 import UIKit
+import RxSwift
+import RxCocoa
 import CocoaAsyncSocket
 
-class ReceivingSocket: NSObject, GCDAsyncUdpSocketDelegate {
+class ReceivingSocket: NSObject {
     let IP = "127.0.0.1"
     let SERVER_PORT = 10001
     let CLIENT_PORT = 5001
-    var socket: GCDAsyncUdpSocket!
+    var socket: GCDAsyncSocket!
+    var proxy: RxGCDAsyncSocketDelegateProxy!
+    var message = ""
+    let disposeBag = DisposeBag()
     
     override init() {
         super.init()
@@ -21,17 +26,51 @@ class ReceivingSocket: NSObject, GCDAsyncUdpSocketDelegate {
     }
     
     func setupConnection() {
-        socket = GCDAsyncUdpSocket(delegate: self, delegateQueue: DispatchQueue.main)
-        do { try socket.bind(toPort: UInt16(CLIENT_PORT)) } catch { print("bind not working") }
-        let message = "Subscribe,topic,datalul"
-        socket.send(message.data(using: .ascii)!, toHost: IP, port: UInt16(SERVER_PORT), withTimeout: 5.0, tag: 1)
-        //do { try socket.enableBroadcast(true)} catch { print("not able to brad cast")}
-        //do { try socket.joinMulticastGroup(IP)} catch { print("joinMulticastGroup not procceed")}
-        do { try socket.beginReceiving()} catch { print("beginReceiving not working") }
-        
+        socket = GCDAsyncSocket()
+        proxy = RxGCDAsyncSocketDelegateProxy(socket: socket)
+        socket.delegate = proxy
+        socket.delegateQueue = DispatchQueue.main
+        do { try socket.connect(toHost: IP, onPort: UInt16(SERVER_PORT)) } catch { print("connect not workign") }
+        socket.rx.connected
+            .subscribe(onNext: { [weak self] connected in
+                guard let `self` = self else {
+                    return
+                }
+                
+                print(connected)
+                self.socket.readData(withTimeout: 3600, tag: 2)
+            })
+            .disposed(by: disposeBag)
     }
-    
-    func udpSocket(_ sock: GCDAsyncUdpSocket, didReceive data: Data, fromAddress address: Data, withFilterContext filterContext: Any?) {
-        print("incoming message: \(data)");
-    }
+//
+//    func socketDidDisconnect(_ sock: GCDAsyncSocket, withError err: Error?) {
+//        print(err?.localizedDescription);
+//    }
+//
+//    func socket(_ sock: GCDAsyncSocket, didConnectToHost host: String, port: UInt16) {
+//        let message = "Subscribe,topic,^@"
+//        let data = message.data(using: String.Encoding.ascii)!
+//        sock.write(data, withTimeout: 5.0, tag: 1)
+//    }
+//
+//    func socket(_ sock: GCDAsyncSocket, didWriteDataWithTag tag: Int) {
+//        sock.readData(withTimeout: 3600, tag: 2)
+//    }
+//
+//    func socket(_ sock: GCDAsyncSocket, didReadPartialDataOfLength partialLength: UInt, tag: Int) {
+//        var result = "test"
+//    }
+//
+//    func socket(_ sock: GCDAsyncSocket, didRead data: Data, withTag tag: Int) {
+//        guard let received = String(bytes: data, encoding: String.Encoding.ascii) else {
+//            return
+//        }
+//
+//        message.append(contentsOf: received)
+//
+//        if received.contains("^@") {
+//            sock.readData(withTimeout: 3600, tag: 2)
+//        }
+//
+//    }
 }

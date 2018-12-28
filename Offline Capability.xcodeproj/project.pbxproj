@@ -16,6 +16,7 @@
 		A830F399213F0AAB00F66A77 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A830F397213F0AAB00F66A77 /* LaunchScreen.storyboard */; };
 		A830F3A4213F0AAB00F66A77 /* Offline_CapabilityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A830F3A3213F0AAB00F66A77 /* Offline_CapabilityTests.swift */; };
 		A830F3AF213F0AAB00F66A77 /* Offline_CapabilityUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A830F3AE213F0AAB00F66A77 /* Offline_CapabilityUITests.swift */; };
+		A85C454821D6B9CF00620380 /* CocoaAsyncSocket+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = A85C454721D6B9CF00620380 /* CocoaAsyncSocket+Rx.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -52,6 +53,7 @@
 		A830F3AA213F0AAB00F66A77 /* Offline CapabilityUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Offline CapabilityUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A830F3AE213F0AAB00F66A77 /* Offline_CapabilityUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Offline_CapabilityUITests.swift; sourceTree = "<group>"; };
 		A830F3B0213F0AAB00F66A77 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A85C454721D6B9CF00620380 /* CocoaAsyncSocket+Rx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CocoaAsyncSocket+Rx.swift"; sourceTree = "<group>"; };
 		E0F9A92FFF6E69CB21D8E01E /* Pods_Offline_Capability.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Offline_Capability.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -113,6 +115,7 @@
 				A830F397213F0AAB00F66A77 /* LaunchScreen.storyboard */,
 				A830F39A213F0AAB00F66A77 /* Info.plist */,
 				A830AA0021B7CE3D00E8AAC3 /* ReceivingSocket.swift */,
+				A85C454721D6B9CF00620380 /* CocoaAsyncSocket+Rx.swift */,
 			);
 			path = "Offline Capability";
 			sourceTree = "<group>";
@@ -351,6 +354,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A830F391213F0AA900F66A77 /* ViewController.swift in Sources */,
+				A85C454821D6B9CF00620380 /* CocoaAsyncSocket+Rx.swift in Sources */,
 				A830F38F213F0AA900F66A77 /* AppDelegate.swift in Sources */,
 				A830AA0121B7CE3D00E8AAC3 /* ReceivingSocket.swift in Sources */,
 			);

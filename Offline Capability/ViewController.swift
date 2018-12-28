@@ -11,10 +11,10 @@ import UIKit
 class ViewController: UIViewController {
 
     @IBOutlet weak var textField: UITextField!
+    let socket = ReceivingSocket()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        let socket = ReceivingSocket()
     }
 
     func displayMessageReceived(_ message: String?) {
