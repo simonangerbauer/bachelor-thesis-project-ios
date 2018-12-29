@@ -6,11 +6,15 @@ import RxCocoa
 public enum SocketResponse {
     case didConnect
     case didReadText(String)
+    case didWrite
     case didDisconnect(Error?)
 }
 
 public class RxGCDAsyncSocketDelegateProxy: DelegateProxy<GCDAsyncSocket, GCDAsyncSocketDelegate>, GCDAsyncSocketDelegate, DelegateProxyType {
-    fileprivate let subject = PublishSubject<SocketResponse>()
+    fileprivate let connected = PublishSubject<Bool>()
+    fileprivate let message = PublishSubject<String>()
+    fileprivate let disconnected = PublishSubject<Error?>()
+    fileprivate let didWrite = PublishSubject<Bool>()
     
     required public init(socket: GCDAsyncSocket) {
         super.init(parentObject: socket, delegateProxy: RxGCDAsyncSocketDelegateProxy.self)
@@ -29,38 +33,45 @@ public class RxGCDAsyncSocketDelegateProxy: DelegateProxy<GCDAsyncSocket, GCDAsy
     }
     
     public func socket(_ sock: GCDAsyncSocket, didConnectToHost host: String, port: UInt16) {
-        subject.onNext(.didConnect)
+        connected.onNext(true)
     }
     
     public func socketDidDisconnect(_ sock: GCDAsyncSocket, withError err: Error?) {
-        subject.onNext(.didDisconnect(err))
+        disconnected.onNext(err)
+    }
+    
+    public func socket(_ sock: GCDAsyncSocket, didWriteDataWithTag tag: Int) {
+        didWrite.onNext(true)
     }
     
     public func socket(_ sock: GCDAsyncSocket, didRead data: Data, withTag tag: Int) {
-        if let message = String(data: data, encoding: String.Encoding.ascii) {
-            subject.onNext(.didReadText(message))
+        if let msg = String(data: data, encoding: String.Encoding.ascii) {
+            message.onNext(msg)
         }
     }
     
     deinit {
-        subject.onCompleted()
+        connected.onCompleted()
+        message.onCompleted()
+        disconnected.onCompleted()
+        didWrite.onCompleted()
     }
 }
 
 extension Reactive where Base: GCDAsyncSocket {
-    public var response: Observable<SocketResponse> {
-        return RxGCDAsyncSocketDelegateProxy.proxy(for: base).subject
+    public var connected: Observable<Bool> {
+        return RxGCDAsyncSocketDelegateProxy.proxy(for: base).connected
     }
     
-    public var connected: Observable<Bool> {
-        //TODO: check why only called on disconnect, not on connect
-        return response.flatMap { (response) -> Observable<Bool> in
-            switch response {
-            case .didConnect:
-                return Observable.just(true)
-            default:
-                return Observable.just(false)
-            }
-        }
+    public var message: Observable<String> {
+        return RxGCDAsyncSocketDelegateProxy.proxy(for: base).message
     }
+    
+    public var disconnected: Observable<Error?> {
+        return RxGCDAsyncSocketDelegateProxy.proxy(for: base).disconnected
+    }
+    
+    public var didWrite: Observable<Bool> {
+        return RxGCDAsyncSocketDelegateProxy.proxy(for: base).didWrite
+    }    
 }

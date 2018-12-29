@@ -7,20 +7,20 @@
 //
 
 import UIKit
+import RxSwift
+import RxCocoa
 
 class ViewController: UIViewController {
 
     @IBOutlet weak var textField: UITextField!
     let socket = ReceivingSocket()
+    let disposeBag = DisposeBag()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-    }
-
-    func displayMessageReceived(_ message: String?) {
-        DispatchQueue.main.async {
-            self.textField.text = message
-        }
+        socket.socket.rx.message
+            .bind(to: textField.rx.text)
+            .disposed(by: disposeBag)
     }
     
     override func didReceiveMemoryWarning() {
