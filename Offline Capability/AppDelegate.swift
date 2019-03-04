@@ -15,7 +15,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+        
+        let sceneCoordinator = SceneCoordinator(window: window!)
+        let subscriber = Subscriber()
+        let publisher = Publisher()
+        let reachabilityService = try! DefaultReachabilityService()
+        let publishService = PublishService(publisherSocket: publisher, reachability: reachabilityService)
+        publishService.start()
+        let service = TaskService(subscriberSocket: subscriber, publish: publishService)
+        
+        let tasksViewModel = TasksViewModel(taskService: service, coordinator: sceneCoordinator)
+        let scene = Scene.tasks(tasksViewModel)
+        sceneCoordinator.transition(to: scene, type: .root)
+        
         return true
     }
 

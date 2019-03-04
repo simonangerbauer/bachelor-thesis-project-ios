@@ -15,6 +15,7 @@ public class RxGCDAsyncSocketDelegateProxy: DelegateProxy<GCDAsyncSocket, GCDAsy
     fileprivate let message = PublishSubject<String>()
     fileprivate let disconnected = PublishSubject<Error?>()
     fileprivate let didWrite = PublishSubject<Bool>()
+    fileprivate let writeDidTimeOut = PublishSubject<Bool>()
     
     required public init(socket: GCDAsyncSocket) {
         super.init(parentObject: socket, delegateProxy: RxGCDAsyncSocketDelegateProxy.self)
@@ -40,6 +41,11 @@ public class RxGCDAsyncSocketDelegateProxy: DelegateProxy<GCDAsyncSocket, GCDAsy
         disconnected.onNext(err)
     }
     
+    public func socket(_ sock: GCDAsyncSocket, shouldTimeoutWriteWithTag tag: Int, elapsed: TimeInterval, bytesDone length: UInt) -> TimeInterval {
+        writeDidTimeOut.onNext(true)
+        return 0
+    }
+    
     public func socket(_ sock: GCDAsyncSocket, didWriteDataWithTag tag: Int) {
         didWrite.onNext(true)
     }
@@ -55,6 +61,7 @@ public class RxGCDAsyncSocketDelegateProxy: DelegateProxy<GCDAsyncSocket, GCDAsy
         message.onCompleted()
         disconnected.onCompleted()
         didWrite.onCompleted()
+        writeDidTimeOut.onCompleted()
     }
 }
 
@@ -73,5 +80,9 @@ extension Reactive where Base: GCDAsyncSocket {
     
     public var didWrite: Observable<Bool> {
         return RxGCDAsyncSocketDelegateProxy.proxy(for: base).didWrite
-    }    
+    }
+    
+    public var writeDidTimeOut: Observable<Bool> {
+        return RxGCDAsyncSocketDelegateProxy.proxy(for: base).writeDidTimeOut
+    }
 }

@@ -11,20 +11,16 @@ import RxSwift
 import RxCocoa
 import CocoaAsyncSocket
 
-class ReceivingSocket: NSObject {
-    let IP = "127.0.0.1"
-    let SERVER_PORT = 10001
-    let CLIENT_PORT = 5001
+class Subscriber: NSObject {
     var socket: GCDAsyncSocket!
     var proxy: RxGCDAsyncSocketDelegateProxy!
     let disposeBag = DisposeBag()
     
     override init() {
         super.init()
-        setupConnection()
     }
     
-    func setupConnection() {
+    func subscribe(topic: String) {
         socket = GCDAsyncSocket()
         proxy = RxGCDAsyncSocketDelegateProxy(socket: socket)
         socket.delegate = proxy
@@ -32,8 +28,8 @@ class ReceivingSocket: NSObject {
         socket.rx.connected
             .subscribe(onNext: { [weak self] in
                 if($0) {
-                    let send = "Subscribe,topic,^@"
-                    self?.socket?.write(send.data(using: String.Encoding.ascii)!, withTimeout: 60, tag: 1)
+                    let send = "Subscribe,\(topic),^@"
+                    self?.socket?.write(send.data(using: String.Encoding.utf8)!, withTimeout: 60, tag: 1)
                 }
             })
             .disposed(by: disposeBag)
@@ -54,6 +50,6 @@ class ReceivingSocket: NSObject {
             })
             .disposed(by: disposeBag)
         
-        do { try socket.connect(toHost: IP, onPort: UInt16(SERVER_PORT)) } catch { print("connect not workign") }
+        do { try socket.connect(toHost: SocketConstants.SERVER_IP, onPort: UInt16(SocketConstants.SUBSCRIBER_PORT)) } catch { print("connect not working") }
     }
 }

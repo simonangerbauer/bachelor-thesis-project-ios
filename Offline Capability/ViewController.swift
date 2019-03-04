@@ -13,7 +13,7 @@ import RxCocoa
 class ViewController: UIViewController {
 
     @IBOutlet weak var textField: UITextField!
-    let socket = ReceivingSocket()
+    let socket = Subscriber()
     let disposeBag = DisposeBag()
     
     override func viewDidLoad() {
