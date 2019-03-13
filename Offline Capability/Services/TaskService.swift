@@ -65,17 +65,54 @@ class TaskService: TaskServiceType {
     }
     
     func tasks() -> Observable<Changeset<RealmTask>> {
-        subscriber.subscribe(topic: Topic.Task.rawValue)
-        subscriber.socket.rx.message
-            .subscribe(onNext: {
-                if($0.contains("^@")) {
-                    let json = $0.dropLast(2).data(using: .utf8, allowLossyConversion: false)!
-                }
-            })
-            .disposed(by: disposeBag)
-        return Observable.empty()
+        return Observable.create { [weak self] observer in
+            if let `self` = self {
+                var result = self.withRealm("getting tasks") { realm -> Changeset<RealmTask> in
+                    let tasks = realm.objects(RealmTask.self)
+                    return Changeset<RealmTask>(results: tasks.toArray(), deleted: [Int](), inserted: [Int](), updated: [Int]())
+                }!
+                
+                observer.onNext(result)
+                
+                self.subscriber.subscribe(topic: Topic.Task.rawValue)
+                self.subscriber.socket.rx.message.subscribe(onNext: { [weak self] value in
+                    do
+                    {
+                        let json: Data = value.dropLast(2).data(using: .utf8, allowLossyConversion: false)!
+                        let jsonData = try JSONDecoder().decode(JsonData.self, from: json)
+                        let task = jsonData.data
+                        let isInDb = result.results.contains(where: { $0.Id == task.Id})
+                        if !isInDb {
+                            self?.withRealm("creating") { realm in
+                                try realm.write {
+                                    realm.add(task)
+                                }
+                            }
+                            result.results.append(task)
+                        } else if jsonData.state == 1 {
+                            let taskInDb = result.results.first(where: { $0.Id == task.Id})!
+                            self?.withRealm("modifying") { realm in
+                                try realm.write {
+                                    realm.delete(taskInDb)
+                                }
+                            }
+                            result.results.remove(at: result.results.firstIndex(of: taskInDb)!)
+                            result.results.append(task)
+                        }
+                        observer.onNext(result)
+                    }
+                    catch let error {
+                        observer.onError(error)
+                        print(error.localizedDescription)
+                    }
+                    })
+                    .disposed(by: self.disposeBag)
+            }
+            else { observer.onCompleted() }
+            
+            return Disposables.create {}
+        }
     }
-    
     
     
     /*

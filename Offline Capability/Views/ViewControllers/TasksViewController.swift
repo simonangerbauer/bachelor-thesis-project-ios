@@ -34,7 +34,9 @@ class TasksViewController: UIViewController, BindableType {
         viewModel.changesets
             .subscribe(onNext: { [weak self] changeset in
                 if changeset.deleted.count == 0 && changeset.inserted.count == 0 && changeset.updated.count == 0 {
-                    self?.tableView?.reloadData()
+                    DispatchQueue.main.async {
+                        self?.tableView?.reloadData()
+                    }
                 } else {
                     self?.tableView?.applyChangeSet(deleted: changeset.deleted, inserted: changeset.inserted, updated: changeset.updated)
                 }

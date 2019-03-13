@@ -15,7 +15,6 @@ class Publisher: NSObject {
     var socket: GCDAsyncSocket!
     var proxy: RxGCDAsyncSocketDelegateProxy!
     let disposeBag = DisposeBag()
-    var topic = ""
     var connected = Variable<Bool>(false)
     
     override init() {

@@ -78,7 +78,6 @@ class RealmTask: Object, Codable {
         let dueString = try container.decode(String.self, forKey: .Due)
         let lastChange = dateFormatter.date(from: lastChangeString)
         let due = dateFormatter.date(from: dueString)
-        let proofs = try container.nestedContainer(keyedBy: CodingKeysProof.self, forKey: .Proofs)
         self.init(Id: Id, Title: Title, Description: Description, Activity: Activity, Officer: Officers, Progress: Progress, LastChange: lastChange ?? Date(), Due: due ?? Date(), Proofs: List<String>())
     }
     
@@ -108,18 +107,23 @@ class RealmTask: Object, Codable {
         let due = dateFormatter.string(from: Due)
         try container.encode(due, forKey: .Due)
         
-        let proofs = Proofs.map { value -> String in
-            return """
-            {
-            "Title": "\(value)",
-            "Id": "\(UUID().uuidString)",
-            "LastChange": "\(lastChange)"
-            }
-            """
+        let proofs = try Proofs.map() { value throws -> Proof in
+            return Proof (title: value, lastChange: lastChange)
         }
-        let proofString = "[\(proofs.joined(separator: ","))]"
         
-        try container.encode(proofString, forKey: .Proofs)
+        try container.encode(proofs, forKey: .Proofs)
     }
     
+}
+
+struct JsonData : Decodable {
+    let data: RealmTask
+    let state: Int
+    let topic: String
+    
+    enum CodingKeys: String, CodingKey {
+        case data
+        case state
+        case topic
+    }
 }
