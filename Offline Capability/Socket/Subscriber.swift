@@ -12,6 +12,7 @@ import RxCocoa
 import CocoaAsyncSocket
 
 class Subscriber: NSObject {
+    var tag: Int = 0
     var socket: GCDAsyncSocket!
     var proxy: RxGCDAsyncSocketDelegateProxy!
     let disposeBag = DisposeBag()
@@ -20,16 +21,23 @@ class Subscriber: NSObject {
         super.init()
     }
     
-    func subscribe(topic: String) {
+    func setupSocket() {
         socket = GCDAsyncSocket()
         proxy = RxGCDAsyncSocketDelegateProxy(socket: socket)
         socket.delegate = proxy
         socket.delegateQueue = DispatchQueue.main
+    }
+    
+    func subscribe(topic: String) {
         socket.rx.connected
             .subscribe(onNext: { [weak self] in
                 if($0) {
-                    let send = "Subscribe,\(topic),^@"
-                    self?.socket?.write(send.data(using: String.Encoding.utf8)!, withTimeout: 60, tag: 1)
+                    var send = "Resubscribe,\(topic),^@\r"
+                    if self?.tag == 0 {
+                        send = "Subscribe,\(topic),^@\r"
+                    }
+                    self?.tag += 1
+                    self?.socket?.write(send.data(using: String.Encoding.utf8)!, withTimeout: 60, tag: self?.tag ?? 0)
                 }
             })
             .disposed(by: disposeBag)
@@ -37,15 +45,20 @@ class Subscriber: NSObject {
         socket.rx.didWrite
             .subscribe(onNext: { [weak self] in
                 if($0) {
-                    self?.socket?.readData(withTimeout: 3600, tag: 2)
+                    self?.tag += 1
+                    self?.socket?.readData(withTimeout: 3600, tag: self?.tag ?? 0)
                 }
             })
             .disposed(by: disposeBag)
         
         socket.rx.message
             .subscribe(onNext: { [weak self] in
-                if($0.contains("^@")) {
-                    self?.socket?.readData(withTimeout: 3600, tag: 2)
+                if($0.contains("^@\r")) {
+                    self?.tag += 1
+                    let send = "Unsubscribe,\(topic),^@\r"
+                    self?.tag += 1
+                    self?.socket?.write(send.data(using: String.Encoding.utf8)!, withTimeout: 60, tag: self?.tag ?? 0)
+                    self?.socket.disconnectAfterReadingAndWriting()
                 }
             })
             .disposed(by: disposeBag)

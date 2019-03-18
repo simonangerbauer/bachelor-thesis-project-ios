@@ -31,14 +31,10 @@ class TasksViewController: UIViewController, BindableType {
     /** Binds the Properties of the viewmodel to the ui controls and connects eventual actions */
     func bindViewModel() {
         
-        viewModel.changesets
+        viewModel.taskService.tasksSubject
             .subscribe(onNext: { [weak self] changeset in
-                if changeset.deleted.count == 0 && changeset.inserted.count == 0 && changeset.updated.count == 0 {
-                    DispatchQueue.main.async {
-                        self?.tableView?.reloadData()
-                    }
-                } else {
-                    self?.tableView?.applyChangeSet(deleted: changeset.deleted, inserted: changeset.inserted, updated: changeset.updated)
+                DispatchQueue.main.async {
+                    self?.tableView?.reloadData()
                 }
             })
             .disposed(by: self.rx.disposeBag)
@@ -66,13 +62,13 @@ extension TasksViewController: UITableViewDataSource {
 extension TasksViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: false)
-        //viewModel.editAction.execute(viewModel.tasks[indexPath.row])
+        viewModel.editAction.execute(viewModel.tasks[indexPath.row])
     }
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         if(editingStyle == .delete) {
             let task = viewModel.tasks[indexPath.row]
-            //viewModel.delete(task: task)
+            viewModel.delete(task: task)
         }
     }
 }

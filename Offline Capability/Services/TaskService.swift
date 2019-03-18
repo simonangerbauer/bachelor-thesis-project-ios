@@ -6,11 +6,14 @@ import RxRealm
 /** Provides all possible operations of tasks. Communicates with the realm mobile platform */
 class TaskService: TaskServiceType {
     
+    
     /** The config used to connect to the realm */
     let config: Realm.Configuration
     let disposeBag = DisposeBag()
     let subscriber: Subscriber
     let publishService: PublishService
+    let tasksSubject = PublishSubject<Changeset<RealmTask>>()
+    var changeset = Changeset<RealmTask>(results: [RealmTask](), deleted: [Int](), inserted: [Int](), updated: [Int]())
     
     /** initializes the realm config and injects subscriber socket */
     init(subscriberSocket: Subscriber, publish: PublishService) {
@@ -45,150 +48,130 @@ class TaskService: TaskServiceType {
             task.Officers = officers
             
             try realm.write {
-                task.Id = UUID().uuidString
+                task.Id = UUID().uuidString.lowercased()
                 realm.add(task)
             }
             
-            self?.publishService.queue.enqueue((Topic.Task.rawValue, ThreadSafeReference(to: task)))
-            
+            changeset.results.append(task)
+            tasksSubject.onNext(changeset)
+            if let data = encodeTask(task) {
+                self?.publishService.queue.enqueue((Topic.Task.rawValue, data, State.Added))
+            }
             return .just(task)
         }
         return result ?? .error(TaskServiceError.creationFailed)
     }
     
     func delete(task: RealmTask) -> Observable<Void> {
-        return Observable.empty()
-    }
-    
-    func update(task: RealmTask, name: String, description: String, due: Date, activity: String, progress: Int, officers: [String], revisors: [String], proofs: [String]) -> Observable<RealmTask> {
-        return Observable.empty()
-    }
-    
-    func tasks() -> Observable<Changeset<RealmTask>> {
-        return Observable.create { [weak self] observer in
-            if let `self` = self {
-                var result = self.withRealm("getting tasks") { realm -> Changeset<RealmTask> in
-                    let tasks = realm.objects(RealmTask.self)
-                    return Changeset<RealmTask>(results: tasks.toArray(), deleted: [Int](), inserted: [Int](), updated: [Int]())
-                }!
-                
-                observer.onNext(result)
-                
-                self.subscriber.subscribe(topic: Topic.Task.rawValue)
-                self.subscriber.socket.rx.message.subscribe(onNext: { [weak self] value in
-                    do
-                    {
-                        let json: Data = value.dropLast(2).data(using: .utf8, allowLossyConversion: false)!
-                        let jsonData = try JSONDecoder().decode(JsonData.self, from: json)
-                        let task = jsonData.data
-                        let isInDb = result.results.contains(where: { $0.Id == task.Id})
-                        if !isInDb {
-                            self?.withRealm("creating") { realm in
-                                try realm.write {
-                                    realm.add(task)
-                                }
-                            }
-                            result.results.append(task)
-                        } else if jsonData.state == 1 {
-                            let taskInDb = result.results.first(where: { $0.Id == task.Id})!
-                            self?.withRealm("modifying") { realm in
-                                try realm.write {
-                                    realm.delete(taskInDb)
-                                }
-                            }
-                            result.results.remove(at: result.results.firstIndex(of: taskInDb)!)
-                            result.results.append(task)
-                        }
-                        observer.onNext(result)
-                    }
-                    catch let error {
-                        observer.onError(error)
-                        print(error.localizedDescription)
-                    }
-                    })
-                    .disposed(by: self.disposeBag)
-            }
-            else { observer.onCompleted() }
-            
-            return Disposables.create {}
+        if let data = encodeTask(task) {
+            publishService.queue.enqueue((Topic.Task.rawValue, data, State.Deleted))
         }
-    }
-    
-    
-    /*
-    /** creates a task with all given attributes
-     - Returns: Observable of the created task
-     */
-    @discardableResult
-    func createTask(name: String, description: String, due: Date, activity: String, officers: [String], revisors: [String], proofs: [String]) -> Observable<RealmTask> {
-        let result = withRealm("creating") { realm -> Observable<RealmTask> in
-            let task = RealmTask()
-            task.name = name
-            task.taskDescription = description
-            task.due = due
-            task.activity = activity
-            task.progress = 0
-            task.proofs.append(objectsIn: proofs)
-            task.revisors.append(objectsIn: revisors)
-            task.officers.append(objectsIn: officers)
-            
-            try realm.write {
-                task.uid = UUID().uuidString
-                realm.add(task)
-            }
-            
-            return .just(task)
-        }
-        return result ?? .error(TaskServiceError.creationFailed)
-    }
-    
-    /** updates the given properties of the task
-     - Returns: Observable of the updated task
-     */
-    @discardableResult
-    func update(task: RealmTask, name: String, description: String, due: Date, activity: String, progress: Int, officers: [String], revisors: [String], proofs: [String]) -> Observable<RealmTask> {
-        let result = withRealm("updating") { realm -> Observable<RealmTask> in
-            try realm.write {
-                task.name = name
-                task.taskDescription = description
-                task.due = due
-                task.activity = activity
-                task.progress = progress
-                task.officers.removeAll()
-                task.officers.append(objectsIn: officers)
-                task.revisors.removeAll()
-                task.revisors.append(objectsIn: revisors)
-                task.proofs.removeAll()
-                task.proofs.append(objectsIn: proofs)
-            }
-            
-            return .just(task)
-        }
-        return result ?? .error(TaskServiceError.updateFailed(task))
-    }
-    
-    /** deletes the given task
-     - Returns: An empty observable
-     */
-    func delete(task: RealmTask) -> Observable<Void> {
-        let result = withRealm("deleting") { realm -> Observable<Void> in
+        
+        self.withRealm("deleting") { realm in
+            //let dbTask = realm.object(ofType: RealmTask.self, forPrimaryKey: task.Id)
             try realm.write {
                 realm.delete(task)
             }
-            return .empty()
-        }
-        return result ?? .error(TaskServiceError.deletionFailed(task))
-    }
-    
-    /** Gets all the tasks
-     - Returns: Observable of the realm collection With live updates as changesets
-     */
-    func tasks() -> Observable<(AnyRealmCollection<RealmTask>, RealmChangeset?)> {
-        let result = withRealm("getting tasks") { realm -> Observable<(AnyRealmCollection<RealmTask>, RealmChangeset?)> in
-            let tasks = realm.objects(RealmTask.self)
-            return Observable.changeset(from: tasks)
         }
         
-        return result ?? .empty()
-    }*/
+        if let index = changeset.results.firstIndex(of: task) {
+            changeset.results.remove(at: index)
+        }
+        
+        tasksSubject.onNext(changeset)
+        
+        return Observable.empty()
+    }
+    
+    func update(task: RealmTask) -> Observable<RealmTask> {
+        self.withRealm("deleting") { realm in
+            try realm.write {
+                realm.add(task, update: true)
+            }
+        }
+        
+        let oldTask = changeset.results.first(where: { $0.Id.lowercased() == task.Id.lowercased()})!
+        changeset.results.remove(at: changeset.results.firstIndex(of: oldTask)!)
+        changeset.results.append(task)
+        tasksSubject.onNext(changeset)
+        if let data = encodeTask(task) {
+            publishService.queue.enqueue((Topic.Task.rawValue, data, State.Modified))
+        }
+        return Observable.just(task)
+    }
+    
+    func getTasks() {
+        
+        changeset = self.withRealm("getting tasks") { realm -> Changeset<RealmTask> in
+            try realm.write {
+                realm.deleteAll()
+            }
+            let tasks = realm.objects(RealmTask.self)
+            return Changeset<RealmTask>(results: tasks.toArray(), deleted: [Int](), inserted: [Int](), updated: [Int]())
+            }!
+        
+        tasksSubject.onNext(changeset)
+        
+        self.subscriber.setupSocket()
+        observeSocket()
+        self.subscriber.subscribe(topic: Topic.Task.rawValue)
+    }
+    
+    func observeSocket() {
+        self.subscriber.socket.rx.message.subscribe(onNext: { [weak self] value in
+            guard let `self` = self else { return }
+            do
+            {
+                let json: Data = value.dropLast(3).data(using: .utf8, allowLossyConversion: false)!
+                let jsonData = try JSONDecoder().decode(JsonData.self, from: json)
+                let task = jsonData.data
+                let isInDb = self.changeset.results.contains(where: { $0.Id.lowercased() == task.Id.lowercased()})
+                if !isInDb {
+                    self.withRealm("creating") { realm in
+                        try realm.write {
+                            realm.add(task)
+                        }
+                    }
+                    self.changeset.results.append(task)
+                }
+                else if jsonData.state == 3 {
+                    let taskInDb = self.changeset.results.first(where: { $0.Id.lowercased() == task.Id.lowercased()})!
+                    self.withRealm("deleting") { realm in
+                        try realm.write {
+                            realm.delete(taskInDb)
+                        }
+                    }
+                    self.changeset.results.remove(at: self.changeset.results.firstIndex(of: taskInDb)!)
+                }
+                else {
+                    let taskInDb = self.changeset.results.first(where: { $0.Id.lowercased() == task.Id.lowercased()})!
+                    self.withRealm("modifying") { realm in
+                        try realm.write {
+                            realm.delete(taskInDb)
+                        }
+                        try realm.write {
+                            realm.add(task)
+                        }
+                    }
+                    self.changeset.results.remove(at: self.changeset.results.firstIndex(of: taskInDb)!)
+                    self.changeset.results.append(task)
+                }
+                self.tasksSubject.onNext(self.changeset)
+                
+                DispatchQueue.main.async {
+                    self.subscriber.setupSocket()
+                    self.observeSocket()
+                    self.subscriber.subscribe(topic: Topic.Task.rawValue)
+                }
+            }
+            catch let error {
+                print(error.localizedDescription)
+            }
+        })
+            .disposed(by: self.disposeBag)
+    }
+    
+    func encodeTask (_ task: RealmTask) -> String? {
+        return try! String(data: JSONEncoder().encode(task), encoding: .utf8)
+    }
 }

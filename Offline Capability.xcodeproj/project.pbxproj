@@ -23,6 +23,9 @@
 		A8B9E250222676C900C20FCE /* Queue.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8B9E24F222676C900C20FCE /* Queue.swift */; };
 		A8B9E254222685F500C20FCE /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8B9E253222685F500C20FCE /* Reachability.swift */; };
 		A8BA07612238EBDA0031A24A /* Proof.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8BA07602238EBD90031A24A /* Proof.swift */; };
+		A8BA0763223976310031A24A /* EditTaskViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8BA0762223976310031A24A /* EditTaskViewModel.swift */; };
+		A8BA0765223977900031A24A /* EditTaskViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8BA0764223977900031A24A /* EditTaskViewController.swift */; };
+		A8BA0767223984800031A24A /* State.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8BA0766223984800031A24A /* State.swift */; };
 		A8FFA75A2225459B00C02FA8 /* Topic.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8FFA7592225459B00C02FA8 /* Topic.swift */; };
 		A8FFA75C22254B2C00C02FA8 /* Publisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8FFA75B22254B2C00C02FA8 /* Publisher.swift */; };
 		A8FFA75F22254B6C00C02FA8 /* SocketConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8FFA75E22254B6C00C02FA8 /* SocketConstants.swift */; };
@@ -83,6 +86,9 @@
 		A8B9E24F222676C900C20FCE /* Queue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Queue.swift; sourceTree = "<group>"; };
 		A8B9E253222685F500C20FCE /* Reachability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
 		A8BA07602238EBD90031A24A /* Proof.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Proof.swift; sourceTree = "<group>"; };
+		A8BA0762223976310031A24A /* EditTaskViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditTaskViewModel.swift; sourceTree = "<group>"; };
+		A8BA0764223977900031A24A /* EditTaskViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditTaskViewController.swift; sourceTree = "<group>"; };
+		A8BA0766223984800031A24A /* State.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = State.swift; sourceTree = "<group>"; };
 		A8FFA7592225459B00C02FA8 /* Topic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Topic.swift; sourceTree = "<group>"; };
 		A8FFA75B22254B2C00C02FA8 /* Publisher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Publisher.swift; sourceTree = "<group>"; };
 		A8FFA75E22254B6C00C02FA8 /* SocketConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocketConstants.swift; sourceTree = "<group>"; };
@@ -215,6 +221,7 @@
 			children = (
 				A8FFA7592225459B00C02FA8 /* Topic.swift */,
 				A8FFA75E22254B6C00C02FA8 /* SocketConstants.swift */,
+				A8BA0766223984800031A24A /* State.swift */,
 			);
 			path = Primitives;
 			sourceTree = "<group>";
@@ -234,6 +241,7 @@
 			children = (
 				A8FFA76B22256B9C00C02FA8 /* TasksViewController.swift */,
 				A8FFA76D22256BC500C02FA8 /* BindableType.swift */,
+				A8BA0764223977900031A24A /* EditTaskViewController.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -250,6 +258,7 @@
 			isa = PBXGroup;
 			children = (
 				A8FFA77022256C8900C02FA8 /* TasksViewModel.swift */,
+				A8BA0762223976310031A24A /* EditTaskViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -505,6 +514,7 @@
 				A8FFA78122256CE500C02FA8 /* TaskService.swift in Sources */,
 				A8B9E24E2226707600C20FCE /* PublishService.swift in Sources */,
 				A8FFA7642225657000C02FA8 /* TaskTableViewCell.swift in Sources */,
+				A8BA0763223976310031A24A /* EditTaskViewModel.swift in Sources */,
 				A8FFA75C22254B2C00C02FA8 /* Publisher.swift in Sources */,
 				A8891D8C222933EE00D6ECE4 /* DateFormatter.swift in Sources */,
 				A8FFA76C22256B9C00C02FA8 /* TasksViewController.swift in Sources */,
@@ -513,6 +523,7 @@
 				A830F391213F0AA900F66A77 /* ViewController.swift in Sources */,
 				A8FFA75F22254B6C00C02FA8 /* SocketConstants.swift in Sources */,
 				A8FFA77122256C8900C02FA8 /* TasksViewModel.swift in Sources */,
+				A8BA0765223977900031A24A /* EditTaskViewController.swift in Sources */,
 				A8FFA7882225739600C02FA8 /* UITableView+Changeset.swift in Sources */,
 				A8FFA7832225703100C02FA8 /* Changeset.swift in Sources */,
 				A8FFA77F22256CE500C02FA8 /* SceneCoordinator.swift in Sources */,
@@ -523,6 +534,7 @@
 				A85C454821D6B9CF00620380 /* CocoaAsyncSocket+Rx.swift in Sources */,
 				A8FFA78022256CE500C02FA8 /* TaskServiceType.swift in Sources */,
 				A8FFA75A2225459B00C02FA8 /* Topic.swift in Sources */,
+				A8BA0767223984800031A24A /* State.swift in Sources */,
 				A830F38F213F0AA900F66A77 /* AppDelegate.swift in Sources */,
 				A881AD3F22269FDC00193F9D /* ReachabilityService.swift in Sources */,
 				A8FFA77C22256CE500C02FA8 /* Scene+ViewController.swift in Sources */,

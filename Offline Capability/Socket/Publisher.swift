@@ -12,6 +12,7 @@ import RxCocoa
 import CocoaAsyncSocket
 
 class Publisher: NSObject {
+    var tag: Int = 0
     var socket: GCDAsyncSocket!
     var proxy: RxGCDAsyncSocketDelegateProxy!
     let disposeBag = DisposeBag()
@@ -19,33 +20,29 @@ class Publisher: NSObject {
     
     override init() {
         super.init()
-        setupSocket()
     }
     
     func setupSocket() {
-        socket = GCDAsyncSocket()
-        proxy = RxGCDAsyncSocketDelegateProxy(socket: socket)
-        socket.delegate = proxy
-        socket.delegateQueue = DispatchQueue.main
-        socket.rx.connected
-            .bind(to: connected)
-            .disposed(by: disposeBag)
+        self.socket = GCDAsyncSocket()
+        self.proxy = RxGCDAsyncSocketDelegateProxy(socket: self.socket)
+        self.socket.delegate = self.proxy
+        self.socket.delegateQueue = DispatchQueue.main
         
-        socket.rx.disconnected
+        self.socket.rx.connected
+            .bind(to: self.connected)
+            .disposed(by: self.disposeBag)
+        
+        self.socket.rx.disconnected
             .subscribe { [weak self] _ in
                 self?.connected = Variable(false)
             }
-            .disposed(by: disposeBag)  
-    }
-    
-    func reconnect() {
-        if(!connected.value) {
-            do { try socket.connect(toHost: SocketConstants.SERVER_IP, onPort: UInt16(SocketConstants.PUBLISHER_PORT)) } catch { print("connect not working") }
-        }
+            .disposed(by: self.disposeBag)
+        
+        do { try socket.connect(toHost: SocketConstants.SERVER_IP, onPort: UInt16(SocketConstants.PUBLISHER_PORT)) } catch { print("connect not working") }
     }
     
     func publish(message: String) {
-        reconnect()
-        self.socket.write(message.data(using: String.Encoding.utf8)!, withTimeout: 10, tag: 1)
+        tag += 1
+        self.socket.write(message.data(using: String.Encoding.utf8)!, withTimeout: 60, tag: tag)
     }
 }

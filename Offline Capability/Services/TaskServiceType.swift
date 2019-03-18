@@ -13,6 +13,8 @@ enum TaskServiceError: Error {
 
 /** Protocol the task service needs to conform to. Contains all possible operations on tasks */
 protocol TaskServiceType {
+    var tasksSubject: PublishSubject<Changeset<RealmTask>> { get }
+    
     /** creates a task with all given attributes
      - Returns: Observable of the created task
      */
@@ -29,11 +31,10 @@ protocol TaskServiceType {
      - Returns: Observable of the updated task
      */
     @discardableResult
-    func update(task: RealmTask, name: String, description: String, due: Date, activity: String, progress: Int, officers: [String], revisors: [String], proofs: [String]) -> Observable<RealmTask>
+    func update(task: RealmTask) -> Observable<RealmTask>
     
     /** Gets all the tasks
      - Returns: Observable of tasks
      */
-    @discardableResult
-    func tasks() -> Observable<Changeset<RealmTask>>
+    func getTasks()
 }

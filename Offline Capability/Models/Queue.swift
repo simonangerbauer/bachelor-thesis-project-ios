@@ -14,7 +14,7 @@ class Queue<T> {
     
     func enqueue(_ element: T) {
         dispatchQueue.async(flags: .barrier) {
-            self.list.append(element)
+            self.list.append((element))
         }
     }
     

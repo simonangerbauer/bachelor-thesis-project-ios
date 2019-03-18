@@ -7,7 +7,7 @@ import Realm
  */
 class RealmTask: Object, Codable {
     /** unique id */
-    @objc dynamic var Id: String = UUID().uuidString
+    @objc dynamic var Id: String = ""
     /** name of the task */
     @objc dynamic var Title: String = ""
     /** description of the task */

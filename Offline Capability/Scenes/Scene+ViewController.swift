@@ -15,12 +15,12 @@ extension Scene {
             viewController.bindViewModel(to: viewModel)
             return navigationController
         
-        /*case .editTask (let viewModel):
+        case .editTask (let viewModel):
             let storyboard = UIStoryboard(name: "Main", bundle: nil)
             let navigationController = storyboard.instantiateViewController(withIdentifier: "EditTask") as! UINavigationController
             var viewController = navigationController.viewControllers.first as! EditTaskViewController
             viewController.bindViewModel(to: viewModel)
-            return navigationController*/
+            return navigationController
         }
     }
 }

@@ -13,8 +13,6 @@ class TasksViewModel {
     let disposeBag = DisposeBag()
     /** Array of tasks to be displayed */
     var tasks: [RealmTask]
-    /** Observable of Changesets containing the changes to the objects */
-    var changesets: Observable<Changeset<RealmTask>>
     
     /** injects dependencies and gets initial items
      - parameter taskService: Service to be injected
@@ -25,9 +23,8 @@ class TasksViewModel {
         self.sceneCoordinator = coordinator
         self.tasks = [RealmTask]()
         
-        self.changesets = self.taskService.tasks()
-        
-        self.changesets.subscribe(onNext: { [weak self] (changeset) in
+        self.taskService.getTasks()
+        self.taskService.tasksSubject.asObservable().subscribe(onNext: { [weak self] (changeset) in
             if let `self` = self {
                 self.tasks = changeset.results
             }
@@ -40,17 +37,13 @@ class TasksViewModel {
      */
     func onCreateTask() -> CocoaAction {
         return CocoaAction { _ in
-            return self.taskService
-                .createTask(title: "", description: "", due: Date(), activity: "", officers: "", proofs: [String]())
-                .flatMap { task -> Observable<Void> in
-                    return Observable.empty()
-                /*
-                    let editTaskViewModel = EditTaskViewModel(coordinator: self.sceneCoordinator, taskService: self.taskService, task: task)
-                    
-                    return self.sceneCoordinator
-                        .transition(to: Scene.editTask(editTaskViewModel), type: .modal)
-                        .asObservable().map { _ in }
-            }*/
+            
+            let editTaskViewModel = EditTaskViewModel(coordinator: self.sceneCoordinator, taskService: self.taskService, task: nil)
+            
+            return self.sceneCoordinator
+                .transition(to: Scene.editTask(editTaskViewModel), type: .modal)
+                .asObservable().map { _ in }
+            
         }
     }
     
@@ -64,7 +57,7 @@ class TasksViewModel {
     }
     
     /** EditAction is called when a Task needs to be edited. Navigates to the EditTask Scene. */
-    /*lazy var editAction: Action<Task, Swift.Never> = { this in
+    lazy var editAction: Action<RealmTask, Swift.Never> = { this in
         return Action { task in
             let editTaskViewModel = EditTaskViewModel(coordinator: this.sceneCoordinator, taskService: this.taskService, task: task)
             
@@ -72,6 +65,6 @@ class TasksViewModel {
                 .transition(to: Scene.editTask(editTaskViewModel), type: .modal)
                 .asObservable()
         }
-    }(self)*/
-    }
+    }(self)
+    
 }
