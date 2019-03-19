@@ -1,10 +1,3 @@
-//
-//  File.swift
-//  Offline Capability
-//
-//  Created by Simon Angerbauer on 13.03.19.
-//  Copyright © 2019 Simon Angerbauer. All rights reserved.
-//
 
 import Foundation
 

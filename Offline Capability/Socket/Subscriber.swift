@@ -1,26 +1,25 @@
-//
-//  Socket.swift
-//  Offline Capability
-//
-//  Created by Simon Angerbauer on 05.12.18.
-//  Copyright © 2018 Simon Angerbauer. All rights reserved.
-//
 
 import UIKit
 import RxSwift
 import RxCocoa
 import CocoaAsyncSocket
 
+/** Subscriber Socket that interacts with the SubsriberService on the Server */
 class Subscriber: NSObject {
+    /** a tag that is increased for each socket operation */
     var tag: Int = 0
+    /** the socket to communicate on */
     var socket: GCDAsyncSocket!
+    /** the reactive proxy that implements all delegate methods */
     var proxy: RxGCDAsyncSocketDelegateProxy!
+    /** to dispose reactive disposables */
     let disposeBag = DisposeBag()
     
     override init() {
         super.init()
     }
     
+    /** sets up the socket */
     func setupSocket() {
         socket = GCDAsyncSocket()
         proxy = RxGCDAsyncSocketDelegateProxy(socket: socket)
@@ -28,6 +27,7 @@ class Subscriber: NSObject {
         socket.delegateQueue = DispatchQueue.main
     }
     
+    /** subscribes this socket to the server for a topic */
     func subscribe(topic: String) {
         socket.rx.connected
             .subscribe(onNext: { [weak self] in

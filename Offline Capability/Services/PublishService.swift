@@ -10,27 +10,31 @@ import Foundation
 import RxSwift
 import RealmSwift
 
+/** Service that publishes the elements from the queue via sockets to the server
+ */
 class PublishService {
+    /** reachability service */
     let reachabilityService: ReachabilityService
+    /** publisher socket */
     let publisher: Publisher
+    /** queue to publish */
     var queue = Queue<(topic: String, data: String, state: State)>()
+    /** dispose bag needed for rx */
     let disposeBag = DisposeBag()
+    /** tracker if queue is worked on or not */
     var started = false
     
+    /** initializes the service */
     init(publisherSocket: Publisher, reachability: ReachabilityService) {
         reachabilityService = reachability
         publisher = publisherSocket
     }
     
+    /** observes the socket for new events.
+     Queue working is started accordingly
+     */
     func observeSocket() {
         DispatchQueue.main.async {
-            self.publisher.socket.rx.didWrite.subscribe(onNext: { value in
-                if value {
-                    _ = self.queue.dequeue() //fucking shit is called to often and starts queueworker too often, flooding with messages
-                    self.work()
-                }
-            }).disposed(by: self.disposeBag)
-            
             self.publisher.socket.rx.writeDidTimeOut.subscribe(onNext: { value in
                 if value {
                     self.started = false
@@ -45,6 +49,7 @@ class PublishService {
         }
     }
     
+    /** starts working on the queue if connectivity allows it */
     func start(){
         reachabilityService.reachability
             .subscribe { [weak self] event in
@@ -53,33 +58,39 @@ class PublishService {
                         self?.started = true
                         self?.work()
                     }
+                } else {
+                    self?.started = false
                 }
             }
             .disposed(by: disposeBag)
     }
     
+    /** works the queue by removing items and publishing them via socket */
     private func work() {
         DispatchQueue.global(qos: .background).async { [weak self] in
             guard let `self` = self else { return }
-            if let item = self.queue.peek()
-            {
-                let message = "{data:\(item.data), topic:\"\(item.topic)\", state:\(item.state.rawValue)}^@\r"
-                
-                self.publisher.socket?.disconnectAfterReadingAndWriting()
-                DispatchQueue.main.sync {
-                    self.publisher.setupSocket()
-                    self.observeSocket()
+            if self.started {
+                if let item = self.queue.dequeue()
+                {
+                    let message = "{data:\(item.data), topic:\"\(item.topic)\", state:\(item.state.rawValue)}^@\r"
+                    
+                    self.publisher.socket?.disconnectAfterReadingAndWriting()
+                    DispatchQueue.main.sync {
+                        self.publisher.setupSocket()
+                        self.observeSocket()
+                    }
+                    self.publisher.publish(message: message)
+                    self.work()
                 }
-                self.publisher.publish(message: message)
-                
-            }
-            else {
-                sleep(1)
-                self.work()
+                else {
+                    sleep(1)
+                    self.work()
+                }
             }
         }
     }
     
+    /** resolves a thread safe reference of a realm object */
     private func resolve(reference: ThreadSafeReference<RealmTask>) -> RealmTask? {
         let realm = try! Realm()
         if let resolved = realm.resolve(reference) {

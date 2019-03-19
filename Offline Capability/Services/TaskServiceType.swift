@@ -31,7 +31,7 @@ protocol TaskServiceType {
      - Returns: Observable of the updated task
      */
     @discardableResult
-    func update(task: RealmTask) -> Observable<RealmTask>
+    func update(task: RealmTask, name: String, description: String, due: Date, activity: String, progress: Int) -> Observable<RealmTask>
     
     /** Gets all the tasks
      - Returns: Observable of tasks

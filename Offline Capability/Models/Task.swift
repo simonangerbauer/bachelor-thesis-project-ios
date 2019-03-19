@@ -34,6 +34,8 @@ class RealmTask: Object, Codable {
         return "Id"
     }
     
+    /** CodingKeys enum, that specifies which property is which key in the json
+     */
     enum CodingKeys: String, CodingKey {
         case Title
         case Id
@@ -65,6 +67,8 @@ class RealmTask: Object, Codable {
         self.Proofs = Proofs
     }
     
+    /** Initializes this object from a decoder
+     */
     convenience required init(from decoder: Decoder) throws {
         let dateFormatter = DateFormatter.iso8601Full
         let container = try decoder.container(keyedBy: CodingKeys.self)
@@ -93,6 +97,8 @@ class RealmTask: Object, Codable {
         super.init(value: value, schema: schema)
     }
     
+    /** encodes the object to json
+     */
     func encode(to encoder: Encoder) throws {
         let dateFormatter = DateFormatter.iso8601Full
         var container = encoder.container(keyedBy: CodingKeys.self)
@@ -116,6 +122,8 @@ class RealmTask: Object, Codable {
     
 }
 
+/** overall struct of the comminucated json data
+ */
 struct JsonData : Decodable {
     let data: RealmTask
     let state: Int

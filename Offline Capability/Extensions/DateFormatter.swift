@@ -1,14 +1,11 @@
-//
-//  DateFormatter.swift
-//  Offline Capability
-//
-//  Created by Simon Angerbauer on 01.03.19.
-//  Copyright © 2019 Simon Angerbauer. All rights reserved.
-//
 
 import Foundation
 
+/** Extensions for DateFormatter
+ */
 extension DateFormatter {
+    /** converts date to iso8601Full format (is used by c# backend)
+     */
     static let iso8601Full: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ"

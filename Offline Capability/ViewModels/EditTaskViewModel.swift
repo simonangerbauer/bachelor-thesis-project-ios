@@ -62,12 +62,8 @@ struct EditTaskViewModel {
                 return this.taskService.createTask(title: name ?? "", description: description ?? "", due: due, activity: activity ?? "", officers: "", proofs: [String]())
             }
             
-            this.task.Title = name ?? ""
-            this.task.Description = description ?? ""
-            this.task.Due = due
-            this.task.Activity = activity ?? ""
-            this.task.Progress = progress
-            return this.taskService.update(task: this.task)
+            
+            return this.taskService.update(task: this.task, name: name ?? "", description: description ?? "", due: due, activity: activity ?? "", progress: progress)
         }
     }(self)
     

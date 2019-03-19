@@ -22,6 +22,7 @@ class TaskService: TaskServiceType {
         config = Realm.Configuration.defaultConfiguration
     }
     
+    /** method that spawns a realm connection and tries to execute an action on it */
     private func withRealm<T>(_ operation: String, action: (Realm) throws -> T) -> T? {
         do {
             let realm = try Realm(configuration: config);
@@ -62,6 +63,9 @@ class TaskService: TaskServiceType {
         return result ?? .error(TaskServiceError.creationFailed)
     }
     
+    /** deletes a task
+     - Returns: Observable with no value
+     */
     func delete(task: RealmTask) -> Observable<Void> {
         if let data = encodeTask(task) {
             publishService.queue.enqueue((Topic.Task.rawValue, data, State.Deleted))
@@ -83,9 +87,18 @@ class TaskService: TaskServiceType {
         return Observable.empty()
     }
     
-    func update(task: RealmTask) -> Observable<RealmTask> {
-        self.withRealm("deleting") { realm in
+    /** updates a task with all given attributes
+     - Returns: Observable of the updated task
+     */
+    func update(task: RealmTask, name: String, description: String, due: Date, activity: String, progress: Int) -> Observable<RealmTask> {
+        self.withRealm("updating") { realm in
             try realm.write {
+                task.Title = name
+                task.LastChange = Date()
+                task.Description = description
+                task.Due = due
+                task.Activity = activity
+                task.Progress = progress
                 realm.add(task, update: true)
             }
         }
@@ -100,6 +113,8 @@ class TaskService: TaskServiceType {
         return Observable.just(task)
     }
     
+    /** starts getting tasks and observes for new values
+     */
     func getTasks() {
         
         changeset = self.withRealm("getting tasks") { realm -> Changeset<RealmTask> in
@@ -117,6 +132,7 @@ class TaskService: TaskServiceType {
         self.subscriber.subscribe(topic: Topic.Task.rawValue)
     }
     
+    /** observes a socket for new task changes */
     func observeSocket() {
         self.subscriber.socket.rx.message.subscribe(onNext: { [weak self] value in
             guard let `self` = self else { return }
@@ -171,6 +187,9 @@ class TaskService: TaskServiceType {
             .disposed(by: self.disposeBag)
     }
     
+    /** encodes a json task
+     - Returns: encoded task
+     */
     func encodeTask (_ task: RealmTask) -> String? {
         return try! String(data: JSONEncoder().encode(task), encoding: .utf8)
     }
